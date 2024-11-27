@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Smart Home Web Portal</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <h1>Smart Home Web Portal</h1>
+    <button id="connect" class="bluetooth-button">Connect to Bluetooth</button>
+
+    <!-- Soil Moisture Sensor -->
+    <div class="sensor-box">
+        <div class="sensor-title">Soil Moisture Sensor</div>
+        <div class="sensor-content">
+            <p class="value-display" id="soil-moisture">Waiting for data...</p>
+        </div>
+    </div>
+
+    <!-- LCD1602 Display Module -->
+    <div class="sensor-box">
+        <div class="sensor-title">LCD1602 Display Module</div>
+        <div class="sensor-content">
+            <input type="text" id="lcd-message" placeholder="Enter message">
+            <button id="send-lcd">Send to LCD</button>
+        </div>
+    </div>
+
+    <!-- Servo Motor -->
+    <div class="sensor-box">
+        <div class="sensor-title">Servo Motor</div>
+        <div class="sensor-content">
+            <button id="servo-left">Rotate Left</button>
+            <button id="servo-right">Rotate Right</button>
+        </div>
+    </div>
+
+    <!-- Steam Sensor -->
+    <div class="sensor-box">
+        <div class="sensor-title">Steam Sensor</div>
+        <div class="sensor-content">
+            <p class="value-display" id="steam-sensor">Waiting for data...</p>
+        </div>
+    </div>
+
+    <!-- Passive Buzzer -->
+    <div class="sensor-box">
+        <div class="sensor-title">Passive Buzzer</div>
+        <div class="sensor-content">
+            <button id="buzzer-on">Turn On</button>
+            <button id="buzzer-off">Turn Off</button>
+        </div>
+    </div>
+
+    <!-- Relay Module -->
+    <div class="sensor-box">
+        <div class="sensor-title">Relay Module</div>
+        <div class="sensor-content">
+            <button id="relay-on">Turn On</button>
+            <button id="relay-off">Turn Off</button>
+        </div>
+    </div>
+
+    <!-- MQ-2 Gas Sensor -->
+    <div class="sensor-box">
+        <div class="sensor-title">MQ-2 Gas Sensor</div>
+        <div class="sensor-content">
+            <p class="value-display" id="gas-sensor">Waiting for data...</p>
+        </div>
+    </div>
+
+    <!-- Photocell Sensor -->
+    <div class="sensor-box">
+        <div class="sensor-title">Photocell Sensor</div>
+        <div class="sensor-content">
+            <p class="value-display" id="photocell-sensor">Waiting for data...</p>
+        </div>
+    </div>
+
+    <!-- Yellow LED -->
+    <div class="sensor-box">
+        <div class="sensor-title">Yellow LED</div>
+        <div class="sensor-content">
+            <button id="yellow-led-on">Turn On</button>
+            <button id="yellow-led-off">Turn Off</button>
+        </div>
+    </div>
+
+    <!-- White LED -->
+    <div class="sensor-box">
+        <div class="sensor-title">White LED</div>
+        <div class="sensor-content">
+            <button id="white-led-on">Turn On</button>
+            <button id="white-led-off">Turn Off</button>
+        </div>
+    </div>
+
+    <script src="js.js"></script>
+</body>
+
+</html>

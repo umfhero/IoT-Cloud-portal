@@ -1,0 +1,66 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    background-color: #f4f4f9;
+    color: #333;
+}
+
+h1 {
+    text-align: center;
+}
+
+.sensor-box {
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    padding: 20px;
+    margin: 20px 0;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.sensor-title {
+    font-weight: bold;
+    font-size: 18px;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.sensor-content {
+    text-align: center;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    background-color: #007BFF;
+    color: #fff;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+.value-display {
+    font-size: 24px;
+    font-weight: bold;
+    color: #007BFF;
+}
+
+.bluetooth-button {
+    display: block;
+    margin: 0 auto 20px;
+    padding: 10px 30px;
+    font-size: 18px;
+    background-color: #28a745;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.bluetooth-button:hover {
+    background-color: #218838;
+}
