@@ -1,0 +1,43 @@
+first repo updload:
+void setup() {
+    Serial.begin(9600); // Ensure baud rate matches the HM-10 module
+}
+
+void loop() {
+    int value = analogRead(A2); // Simulate soil moisture value
+    String data = "Soil moisture value: " + String(value); // Format message
+    Serial.println(data); // Send data over Serial
+    delay(1000); // 1-second delay
+}
+
+
+------
+
+void setup() {
+    Serial.begin(9600); // Ensure baud rate matches the HM-10 module
+    pinMode(8, OUTPUT); // White LED
+    pinMode(11, OUTPUT); // Yellow LED
+}
+
+void loop() {
+    if (Serial.available()) {
+        String command = Serial.readStringUntil('\n'); // Read incoming commands
+        command.trim(); // Remove extra spaces or newlines
+
+        if (command == "WHITE_LED_ON") {
+            digitalWrite(8, HIGH); // Turn on White LED
+        } else if (command == "WHITE_LED_OFF") {
+            digitalWrite(8, LOW); // Turn off White LED
+        } else if (command == "YELLOW_LED_ON") {
+            digitalWrite(11, HIGH); // Turn on Yellow LED
+        } else if (command == "YELLOW_LED_OFF") {
+            digitalWrite(11, LOW); // Turn off Yellow LED
+        }
+    }
+
+    // Simulate soil moisture value for testing
+    int value = analogRead(A2); // Simulate soil moisture value
+    String data = "Soil moisture value: " + String(value); // Format message
+    Serial.println(data); // Send data over Serial
+    delay(1000); // 1-second delay
+}
