@@ -12,32 +12,114 @@ void loop() {
 
 
 ------
+Gas, soil moisture, steam, phtocell, motion
+
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
+
+// Define sensor pins
+int MQ2 = A0; // Gas sensor
+int soilMoisture = A2; // Soil moisture sensor
+int steamSensor = A3; // Steam sensor
+int photocellSensor = A1; // Photocell sensor
+int motionSensor = 2; // Motion sensor (digital pin)
+int motionLED = 7; // LED for motion detection
+int buzzer = 4; // Buzzer (now connected to digital pin 4)
+
+// Initialize LCD
+LiquidCrystal_I2C mylcd(0x27, 16, 2);
 
 void setup() {
-    Serial.begin(9600); // Ensure baud rate matches the HM-10 module
-    pinMode(8, OUTPUT); // White LED
-    pinMode(11, OUTPUT); // Yellow LED
+  Serial.begin(9600); // Initialize Serial Monitor
+  mylcd.init();
+  mylcd.backlight();
+  mylcd.clear();
+
+  // Initialize pins
+  pinMode(MQ2, INPUT);
+  pinMode(soilMoisture, INPUT);
+  pinMode(steamSensor, INPUT);
+  pinMode(photocellSensor, INPUT);
+  pinMode(motionSensor, INPUT);
+  pinMode(motionLED, OUTPUT);
+  pinMode(buzzer, OUTPUT);
+
+  digitalWrite(motionLED, LOW); // Ensure LED is off initially
 }
 
 void loop() {
-    if (Serial.available()) {
-        String command = Serial.readStringUntil('\n'); // Read incoming commands
-        command.trim(); // Remove extra spaces or newlines
+  // Gas sensor reading
+  int gasValue = analogRead(MQ2);
+  Serial.print("Gas Sensor (A0): ");
+  Serial.println(gasValue);
 
-        if (command == "WHITE_LED_ON") {
-            digitalWrite(8, HIGH); // Turn on White LED
-        } else if (command == "WHITE_LED_OFF") {
-            digitalWrite(8, LOW); // Turn off White LED
-        } else if (command == "YELLOW_LED_ON") {
-            digitalWrite(11, HIGH); // Turn on Yellow LED
-        } else if (command == "YELLOW_LED_OFF") {
-            digitalWrite(11, LOW); // Turn off Yellow LED
-        }
-    }
+  if (gasValue > 450) {
+    tone(buzzer, 589); // Activate buzzer for gas detection
+  } else {
+    noTone(buzzer);
+  }
 
-    // Simulate soil moisture value for testing
-    int value = analogRead(A2); // Simulate soil moisture value
-    String data = "Soil moisture value: " + String(value); // Format message
-    Serial.println(data); // Send data over Serial
-    delay(1000); // 1-second delay
+  // Soil moisture sensor reading
+  int soilValue = analogRead(soilMoisture);
+  Serial.print("Soil Moisture (A2): ");
+  Serial.println(soilValue);
+
+  if (soilValue < 300) {
+    mylcd.setCursor(0, 0);
+    mylcd.print("Soil: Dry      ");
+  } else if (soilValue >= 300 && soilValue <= 700) {
+    mylcd.setCursor(0, 0);
+    mylcd.print("Soil: Humid    ");
+  } else {
+    mylcd.setCursor(0, 0);
+    mylcd.print("Soil: Wet      ");
+  }
+
+  // Steam sensor reading
+  int steamValue = analogRead(steamSensor);
+  Serial.print("Steam Sensor (A3): ");
+  Serial.println(steamValue);
+
+  if (steamValue > 300) {
+    mylcd.setCursor(0, 1);
+    mylcd.print("Steam: Detected");
+  } else {
+    mylcd.setCursor(0, 1);
+    mylcd.print("Steam: None    ");
+  }
+
+  // Photocell sensor reading
+  int lightValue = analogRead(photocellSensor);
+  Serial.print("Photocell Sensor (A1): ");
+  Serial.println(lightValue);
+
+  if (lightValue < 300) {
+    mylcd.setCursor(0, 1);
+    mylcd.print("Light: Dim     ");
+  } else if (lightValue >= 300 && lightValue <= 700) {
+    mylcd.setCursor(0, 1);
+    mylcd.print("Light: Medium  ");
+  } else {
+    mylcd.setCursor(0, 1);
+    mylcd.print("Light: Bright  ");
+  }
+
+  // Motion sensor and LED
+  int motionValue = digitalRead(motionSensor);
+  Serial.print("Motion Sensor (D2): ");
+  if (motionValue == HIGH) {
+    Serial.println("Motion Detected");
+    mylcd.setCursor(0, 1);
+    mylcd.print("Motion: Yes    ");
+    digitalWrite(motionLED, HIGH); // Turn on LED when motion is detected
+  } else {
+    Serial.println("No Motion");
+    mylcd.setCursor(0, 1);
+    mylcd.print("Motion: No     ");
+    digitalWrite(motionLED, LOW); // Turn off LED when no motion is detected
+  }
+
+  Serial.println("--------------------");
+  delay(1000); // 1-second delay
 }
+
