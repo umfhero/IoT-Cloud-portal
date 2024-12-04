@@ -73,29 +73,36 @@ function processLine(line) {
             const sensorElement = document.getElementById(id);
             const sensorBox = sensorElement?.closest('.sensor-box');
 
-            // Update text content and background colors
-            if (key === 'Gas Sensor' || key === 'Steam Sensor') {
-                if (key === 'Steam Sensor' && dataValue > 50) {
-                    // Rain condition for steam sensor
-                    sensorElement.textContent = `${key}: Rain Detected`;
-                    sensorBox.style.backgroundColor = ''; // Remove background color
-                    sensorBox.style.backgroundImage = "url('pics/Rain.jpg')"; // Set rain image
-                    sensorBox.style.backgroundSize = "cover"; // Ensure image covers the box
-                    sensorBox.style.backgroundPosition = "center"; // Center the image
-                } else if (dataValue >= ranges[key].green[0] && dataValue <= ranges[key].green[1]) {
-                    sensorBox.style.backgroundColor = '#d4edda'; // Green
-                    sensorBox.style.backgroundImage = ''; // Remove background image
-                    sensorElement.textContent = `${key}: ${dataValue}`;
-                } else if (dataValue >= ranges[key].orange[0] && dataValue <= ranges[key].orange[1]) {
-                    sensorBox.style.backgroundColor = '#fff3cd'; // Orange
-                    sensorBox.style.backgroundImage = ''; // Remove background image
-                    sensorElement.textContent = `${key}: ${dataValue}`;
-                } else if (dataValue >= ranges[key].red[0]) {
-                    sensorBox.style.backgroundColor = '#f8d7da'; // Red
-                    sensorBox.style.backgroundImage = ''; // Remove background image
-                    sensorElement.textContent = `${key}: ${dataValue}`;
-                }
+        if (key === 'Gas Sensor' || key === 'Steam Sensor') {
+            if (key === 'Steam Sensor' && dataValue > 50) {
+                // Rain condition for steam sensor
+                sensorElement.textContent = `${key}: Rain Detected`;
+                sensorBox.style.backgroundColor = ''; // Remove background color
+                sensorBox.style.backgroundImage = "url('pics/Rain.jpg')"; // Set rain image
+                sensorBox.style.backgroundSize = "cover"; // Ensure image covers the box
+                sensorBox.style.backgroundPosition = "center"; // Center the image
+            } else if (key === 'Steam Sensor' && dataValue <= 50) {
+                // Reset when no rain is detected
+                sensorElement.textContent = `${key}: ${dataValue}`;
+                sensorBox.style.backgroundColor = '#d4edda'; // Green for normal
+                sensorBox.style.backgroundImage = ''; // Remove background image
+            } else if (dataValue >= ranges[key].green[0] && dataValue <= ranges[key].green[1]) {
+                sensorBox.style.backgroundColor = '#d4edda'; // Green
+                sensorBox.style.backgroundImage = ''; // Remove background image
+                sensorElement.textContent = `${key}: ${dataValue}`;
+            } else if (dataValue >= ranges[key].orange[0] && dataValue <= ranges[key].orange[1]) {
+                sensorBox.style.backgroundColor = '#fff3cd'; // Orange
+                sensorBox.style.backgroundImage = ''; // Remove background image
+                sensorElement.textContent = `${key}: ${dataValue}`;
+            } else if (dataValue >= ranges[key].red[0]) {
+                sensorBox.style.backgroundColor = '#f8d7da'; // Red
+                sensorBox.style.backgroundImage = ''; // Remove background image
+                sensorElement.textContent = `${key}: ${dataValue}`;
             }
+        }
+
+
+            
 
             if (key === 'Soil Moisture') {
                 if (dataValue === 0) {
