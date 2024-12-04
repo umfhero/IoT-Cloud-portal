@@ -5,6 +5,7 @@
 int MQ2 = A0;            // Gas sensor
 int soilMoisture = A2;   // Soil moisture sensor
 int steamSensor = A3;    // Steam sensor
+int lightSensor = A1;    // Photocell (light sensor)
 int motionSensor = 2;    // Motion sensor (digital pin)
 int motionLED = 7;       // LED for motion detection
 int buzzer = 4;          // Buzzer (connected to digital pin 4)
@@ -26,6 +27,7 @@ void setup() {
   pinMode(MQ2, INPUT);
   pinMode(soilMoisture, INPUT);
   pinMode(steamSensor, INPUT);
+  pinMode(lightSensor, INPUT);  // Initialize light sensor pin
   pinMode(motionSensor, INPUT);
   pinMode(motionLED, OUTPUT);
   pinMode(buzzer, OUTPUT);
@@ -61,37 +63,50 @@ void loop() {
     digitalWrite(fireLED, LOW); // Turn off the fire LED if no fire detected
   }
 
-  // Soil moisture sensor reading
-  int soilValue = analogRead(soilMoisture);
-  Serial.print("Soil Moisture (A2): ");
-  Serial.println(soilValue);
+  // Only check other warnings if no fire danger
+  if (!danger) {
+    // Soil moisture sensor reading
+    int soilValue = analogRead(soilMoisture);
+    Serial.print("Soil Moisture (A2): ");
+    Serial.println(soilValue);
 
-  if (soilValue < 300) {
-    lcdMessage = "Soil: Too Dry!";
-    warning = true;
-  }
+    if (soilValue < 300) {
+      lcdMessage = "Soil: Too Dry!";
+      warning = true;
+    }
 
-  // Steam sensor reading
-  int steamValue = analogRead(steamSensor);
-  Serial.print("Steam Sensor (A3): ");
-  Serial.println(steamValue);
+    // Steam sensor reading
+    int steamValue = analogRead(steamSensor);
+    Serial.print("Steam Sensor (A3): ");
+    Serial.println(steamValue);
 
-  if (steamValue > 300) {
-    lcdMessage = "Steam Alert!";
-    warning = true;
-  }
+    if (steamValue > 300) {
+      lcdMessage = "Steam Alert!";
+      warning = true;
+    }
 
-  // Motion sensor and LED
-  int motionValue = digitalRead(motionSensor);
-  Serial.print("Motion Sensor (D2): ");
-  if (motionValue == HIGH) {
-    Serial.println("Motion Detected");
-    lcdMessage = "Motion Detected!";
-    digitalWrite(motionLED, HIGH); // Turn on LED when motion is detected
-    warning = true;
-  } else {
-    Serial.println("No Motion");
-    digitalWrite(motionLED, LOW); // Turn off LED when no motion is detected
+    // Photocell (light sensor) reading
+    int lightValue = analogRead(lightSensor);
+    Serial.print("Photocell Sensor (A1): ");
+    Serial.println(lightValue);
+
+    if (lightValue < 200) {
+      lcdMessage = "Low Light Level!";
+      warning = true;
+    }
+
+    // Motion sensor and LED
+    int motionValue = digitalRead(motionSensor);
+    Serial.print("Motion Sensor (D2): ");
+    if (motionValue == HIGH) {
+      Serial.println("Motion Detected");
+      lcdMessage = "Motion Detected!";
+      digitalWrite(motionLED, HIGH); // Turn on LED when motion is detected
+      warning = true;
+    } else {
+      Serial.println("No Motion");
+      digitalWrite(motionLED, LOW); // Turn off LED when no motion is detected
+    }
   }
 
   // LED Indications

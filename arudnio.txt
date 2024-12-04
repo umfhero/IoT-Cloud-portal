@@ -123,3 +123,157 @@ void loop() {
   delay(1000); // 1-second delay
 }
 
+
+
+
+//////////////////////////////
+
+
+
+
+
+
+
+
+Final code that works (Unplug Bluetooth before running)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
+
+// Define sensor pins
+int MQ2 = A0;            // Gas sensor
+int soilMoisture = A2;   // Soil moisture sensor
+int steamSensor = A3;    // Steam sensor
+int motionSensor = 2;    // Motion sensor (digital pin)
+int motionLED = 7;       // LED for motion detection
+int buzzer = 4;          // Buzzer (connected to digital pin 4)
+int redLED = 8;          // Red LED for critical alerts
+int greenLED = 9;        // Green LED for normal operation
+int yellowLED = 10;      // Yellow LED for minor warnings
+int fireLED = 11;        // Yellow LED for fire alert
+
+// Initialize LCD
+LiquidCrystal_I2C mylcd(0x27, 16, 2);
+
+void setup() {
+  Serial.begin(9600); // Initialize Serial Monitor
+  mylcd.init();
+  mylcd.backlight();
+  mylcd.clear();
+
+  // Initialize pins
+  pinMode(MQ2, INPUT);
+  pinMode(soilMoisture, INPUT);
+  pinMode(steamSensor, INPUT);
+  pinMode(motionSensor, INPUT);
+  pinMode(motionLED, OUTPUT);
+  pinMode(buzzer, OUTPUT);
+  pinMode(redLED, OUTPUT);
+  pinMode(greenLED, OUTPUT);
+  pinMode(yellowLED, OUTPUT);
+  pinMode(fireLED, OUTPUT);
+
+  digitalWrite(motionLED, LOW); // Ensure motion LED is off initially
+  digitalWrite(redLED, LOW);    // Red LED off
+  digitalWrite(greenLED, HIGH); // Green LED on for normal status
+  digitalWrite(yellowLED, LOW); // Yellow LED off
+  digitalWrite(fireLED, LOW);   // Fire LED off
+}
+
+void loop() {
+  bool danger = false;    // Track if there's any danger
+  bool warning = false;   // Track if there's any minor warning
+  String lcdMessage = "System Working"; // Default message
+
+  // Gas sensor reading
+  int gasValue = analogRead(MQ2);
+  Serial.print("Gas Sensor (A0): ");
+  Serial.println(gasValue);
+
+  if (gasValue > 450) {
+    tone(buzzer, 589); // Activate buzzer for gas detection
+    lcdMessage = "FIRE! GET OUT!";
+    digitalWrite(fireLED, HIGH); // Turn on the fire LED
+    danger = true;
+  } else {
+    noTone(buzzer);
+    digitalWrite(fireLED, LOW); // Turn off the fire LED if no fire detected
+  }
+
+  // Soil moisture sensor reading
+  int soilValue = analogRead(soilMoisture);
+  Serial.print("Soil Moisture (A2): ");
+  Serial.println(soilValue);
+
+  if (soilValue < 300) {
+    lcdMessage = "Soil: Too Dry!";
+    warning = true;
+  }
+
+  // Steam sensor reading
+  int steamValue = analogRead(steamSensor);
+  Serial.print("Steam Sensor (A3): ");
+  Serial.println(steamValue);
+
+  if (steamValue > 300) {
+    lcdMessage = "Steam Alert!";
+    warning = true;
+  }
+
+  // Motion sensor and LED
+  int motionValue = digitalRead(motionSensor);
+  Serial.print("Motion Sensor (D2): ");
+  if (motionValue == HIGH) {
+    Serial.println("Motion Detected");
+    lcdMessage = "Motion Detected!";
+    digitalWrite(motionLED, HIGH); // Turn on LED when motion is detected
+    warning = true;
+  } else {
+    Serial.println("No Motion");
+    digitalWrite(motionLED, LOW); // Turn off LED when no motion is detected
+  }
+
+  // LED Indications
+  if (danger) {
+    digitalWrite(redLED, HIGH);
+    digitalWrite(greenLED, LOW);
+    digitalWrite(yellowLED, LOW);
+  } else if (warning) {
+    digitalWrite(redLED, LOW);
+    digitalWrite(greenLED, LOW);
+    digitalWrite(yellowLED, HIGH);
+  } else {
+    digitalWrite(redLED, LOW);
+    digitalWrite(greenLED, HIGH);
+    digitalWrite(yellowLED, LOW);
+  }
+
+  // Update the LCD with the highest priority message
+  mylcd.clear();
+  mylcd.setCursor(0, 0);
+  mylcd.print(lcdMessage);
+
+  Serial.println("--------------------");
+  delay(1000); // 1-second delay
+}
+
