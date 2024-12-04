@@ -97,10 +97,28 @@ function processLine(line) {
             }
 
             if (key === 'Photocell Sensor') {
-                // Photocell sensor has no color changes, only value updates
-                sensorElement.textContent = `${key} Value: ${dataValue}`;
-                sensorBox.style.backgroundColor = ''; // No color
+                if (dataValue < 200) {
+                    // Night condition
+                    sensorElement.textContent = `${key}: Night`;
+                    sensorBox.style.backgroundColor = ''; // Remove background color
+                    sensorBox.style.backgroundImage = "url('pics/Night.jpg')"; // Set night image
+                    sensorBox.style.backgroundSize = "cover"; // Ensure image covers the box
+                    sensorBox.style.backgroundPosition = "center"; // Center the image
+                } else if (dataValue > 500) {
+                    // Day condition
+                    sensorElement.textContent = `${key}: Day`;
+                    sensorBox.style.backgroundColor = ''; // Remove background color
+                    sensorBox.style.backgroundImage = "url('pics/day.jpg')"; // Set day image
+                    sensorBox.style.backgroundSize = "cover"; // Ensure image covers the box
+                    sensorBox.style.backgroundPosition = "center"; // Center the image
+                } else {
+                    sensorElement.textContent = `${key} Value: ${dataValue}`;
+                    sensorBox.style.backgroundColor = ''; // No specific color
+                    sensorBox.style.backgroundImage = ''; // Remove background image
+                }
             }
+
+
 
             if (key === 'Motion Sensor') {
                 if (line.includes('No Motion')) {
