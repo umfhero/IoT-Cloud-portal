@@ -1,7 +1,6 @@
 #include <Wire.h>
 #include <LiquidCrystal_I2C.h>
 
-// Define sensor pins
 int MQ2 = A0;            // Gas sensor
 int soilMoisture = A2;   // Soil moisture sensor
 int steamSensor = A3;    // Steam sensor
@@ -14,7 +13,7 @@ int greenLED = 9;        // Green LED for normal operation
 int yellowLED = 10;      // Yellow LED for minor warnings
 int fireLED = 11;        // Yellow LED for fire alert
 
-// Initialize LCD
+//libary
 LiquidCrystal_I2C mylcd(0x27, 16, 2);
 
 void setup() {
@@ -23,11 +22,11 @@ void setup() {
   mylcd.backlight();
   mylcd.clear();
 
-  // Initialize pins
+  // eg pins
   pinMode(MQ2, INPUT);
   pinMode(soilMoisture, INPUT);
   pinMode(steamSensor, INPUT);
-  pinMode(lightSensor, INPUT);  // Initialize light sensor pin
+  pinMode(lightSensor, INPUT); 
   pinMode(motionSensor, INPUT);
   pinMode(motionLED, OUTPUT);
   pinMode(buzzer, OUTPUT);
@@ -36,34 +35,32 @@ void setup() {
   pinMode(yellowLED, OUTPUT);
   pinMode(fireLED, OUTPUT);
 
-  digitalWrite(motionLED, LOW); // Ensure motion LED is off initially
-  digitalWrite(redLED, LOW);    // Red LED off
-  digitalWrite(greenLED, HIGH); // Green LED on for normal status
-  digitalWrite(yellowLED, LOW); // Yellow LED off
-  digitalWrite(fireLED, LOW);   // Fire LED off
+  digitalWrite(motionLED, LOW);
+  digitalWrite(redLED, LOW);    
+  digitalWrite(greenLED, HIGH); 
+  digitalWrite(yellowLED, LOW); 
+  digitalWrite(fireLED, LOW);   // Fire specific led
 }
-
+// priority system
 void loop() {
-  bool danger = false;    // Track if there's any danger
-  bool warning = false;   // Track if there's any minor warning
-  String lcdMessage = "System Working"; // Default message
+  bool danger = false;   
+  bool warning = false;  
+  String lcdMessage = "System Working"; // default message
 
-  // Gas sensor reading
   int gasValue = analogRead(MQ2);
   Serial.print("Gas Sensor (A0): ");
   Serial.println(gasValue);
 
   if (gasValue > 450) {
-    tone(buzzer, 589); // Activate buzzer for gas detection
+    tone(buzzer, 589); 
     lcdMessage = "FIRE! GET OUT!";
-    digitalWrite(fireLED, HIGH); // Turn on the fire LED
+    digitalWrite(fireLED, HIGH); 
     danger = true;
   } else {
     noTone(buzzer);
-    digitalWrite(fireLED, LOW); // Turn off the fire LED if no fire detected
+    digitalWrite(fireLED, LOW); 
   }
 
-  // Only check other warnings if no fire danger
   if (!danger) {
     // Soil moisture sensor reading
     int soilValue = analogRead(soilMoisture);
@@ -75,7 +72,6 @@ void loop() {
       warning = true;
     }
 
-    // Steam sensor reading
     int steamValue = analogRead(steamSensor);
     Serial.print("Steam Sensor (A3): ");
     Serial.println(steamValue);
@@ -85,7 +81,6 @@ void loop() {
       warning = true;
     }
 
-    // Photocell (light sensor) reading
     int lightValue = analogRead(lightSensor);
     Serial.print("Photocell Sensor (A1): ");
     Serial.println(lightValue);
@@ -95,7 +90,6 @@ void loop() {
       warning = true;
     }
 
-    // Motion sensor and LED
     int motionValue = digitalRead(motionSensor);
     Serial.print("Motion Sensor (D2): ");
     if (motionValue == HIGH) {
@@ -109,7 +103,7 @@ void loop() {
     }
   }
 
-  // LED Indications
+// Priority prints (for web portal)
   if (danger) {
     digitalWrite(redLED, HIGH);
     digitalWrite(greenLED, LOW);
@@ -124,7 +118,6 @@ void loop() {
     digitalWrite(yellowLED, LOW);
   }
 
-  // Update the LCD with the highest priority message
   mylcd.clear();
   mylcd.setCursor(0, 0);
   mylcd.print(lcdMessage);
